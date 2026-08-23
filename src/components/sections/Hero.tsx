@@ -26,7 +26,7 @@ export function Hero({ stats }: HeroProps) {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <HeroCanvas />
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/30 via-transparent to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-charcoal/30 via-transparent to-background" />
       </div>
 
       <div className="container-traic relative z-10 section-padding pt-32">
@@ -79,7 +79,7 @@ export function Hero({ stats }: HeroProps) {
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="flex flex-col items-center gap-2 animate-bounce">
           <span className="font-mono-label text-[10px] text-muted">SCROLL</span>
-          <div className="w-px h-8 bg-gradient-to-b from-cyan to-transparent" />
+          <div className="w-px h-8 bg-linear-to-b from-cyan to-transparent" />
         </div>
       </div>
     </section>
