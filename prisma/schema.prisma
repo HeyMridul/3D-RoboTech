@@ -1,0 +1,348 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventType {
+  HACKATHON
+  WORKSHOP
+  COMPETITION
+  TECH_TALK
+  EXHIBITION
+  BOOTCAMP
+  MEETING
+  OTHER
+}
+
+enum WorkshopLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum MemberCategory {
+  CORE_TEAM
+  COORDINATOR
+  MENTOR
+  PROJECT_LEAD
+  MEMBER
+  ALUMNI
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  role          UserRole  @default(EDITOR)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  blogPosts     BlogPost[]
+  projects      Project[]       @relation("ProjectCreator")
+  members       Member[]        @relation("MemberCreator")
+  events        Event[]         @relation("EventCreator")
+  workshops     Workshop[]      @relation("WorkshopCreator")
+  achievements  Achievement[]   @relation("AchievementCreator")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  color       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  projects    Project[]
+}
+
+model Technology {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  icon        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  projects    ProjectTechnology[]
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String
+  excerpt       String?
+  status        String        @default("IN_PROGRESS")
+  categoryId    String?
+  category      Category?     @relation(fields: [categoryId], references: [id])
+  imageUrl      String?
+  modelUrl      String?
+  githubUrl     String?
+  demoUrl       String?
+  videoUrl      String?
+  year          Int?
+  achievement   String?
+  problem       String?       @db.Text
+  solution      String?       @db.Text
+  architecture  String?       @db.Text
+  hardware      String?       @db.Text
+  software      String?       @db.Text
+  challenges    String?       @db.Text
+  results       String?       @db.Text
+  featured      Boolean       @default(false)
+  order         Int           @default(0)
+  publishStatus PublishStatus @default(DRAFT)
+  createdById   String?
+  createdBy     User?         @relation("ProjectCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  technologies  ProjectTechnology[]
+  contributors  ProjectContributor[]
+  gallery       GalleryItem[]
+  media         Media[]
+
+  @@index([publishStatus, featured])
+  @@index([categoryId])
+}
+
+model ProjectTechnology {
+  id           String     @id @default(cuid())
+  projectId    String
+  technologyId String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, technologyId])
+}
+
+model ProjectContributor {
+  id        String  @id @default(cuid())
+  projectId String
+  memberId  String
+  role      String?
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  member    Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, memberId])
+}
+
+model Member {
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  role          String
+  category      MemberCategory @default(MEMBER)
+  bio           String?        @db.Text
+  photoUrl      String?
+  skills        String[]
+  githubUrl     String?
+  linkedinUrl   String?
+  portfolioUrl  String?
+  email         String?
+  active        Boolean        @default(true)
+  order         Int            @default(0)
+  publishStatus PublishStatus  @default(PUBLISHED)
+  createdById   String?
+  createdBy     User?          @relation("MemberCreator", fields: [createdById], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+
+  projects      ProjectContributor[]
+  achievements  MemberAchievement[]
+
+  @@index([category, publishStatus])
+}
+
+model MemberAchievement {
+  id            String      @id @default(cuid())
+  memberId      String
+  achievementId String
+  member        Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, achievementId])
+}
+
+model Event {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String        @db.Text
+  type          EventType     @default(OTHER)
+  location      String?
+  startDate     DateTime
+  endDate       DateTime?
+  imageUrl      String?
+  registrationUrl String?
+  featured      Boolean       @default(false)
+  publishStatus PublishStatus @default(DRAFT)
+  createdById   String?
+  createdBy     User?         @relation("EventCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([startDate, publishStatus])
+}
+
+model Workshop {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String        @db.Text
+  instructor    String
+  track         String
+  level         WorkshopLevel @default(BEGINNER)
+  duration      String?
+  startDate     DateTime?
+  resources     String?
+  registrationOpen Boolean    @default(true)
+  maxSeats      Int?
+  imageUrl      String?
+  order         Int           @default(0)
+  publishStatus PublishStatus @default(DRAFT)
+  createdById   String?
+  createdBy     User?         @relation("WorkshopCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([track, publishStatus])
+}
+
+model Achievement {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String        @db.Text
+  year          Int
+  missionNumber Int?
+  rank          String?
+  organization  String?
+  imageUrl      String?
+  featured      Boolean       @default(false)
+  order         Int           @default(0)
+  publishStatus PublishStatus @default(DRAFT)
+  createdById   String?
+  createdBy     User?         @relation("AchievementCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  members       MemberAchievement[]
+
+  @@index([year, publishStatus])
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  name      String
+  email     String
+  year      String
+  branch    String
+  interests String[]
+  skills    String[]
+  githubUrl String?
+  linkedinUrl String?
+  message   String            @db.Text
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read, createdAt])
+}
+
+model BlogPost {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  excerpt       String?
+  content       String        @db.Text
+  coverImage    String?
+  authorId      String?
+  author        User?         @relation(fields: [authorId], references: [id])
+  publishStatus PublishStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([publishStatus, publishedAt])
+}
+
+model GalleryItem {
+  id          String   @id @default(cuid())
+  title       String?
+  caption     String?
+  imageUrl    String
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
