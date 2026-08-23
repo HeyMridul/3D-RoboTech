@@ -77,7 +77,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               <span className="font-mono-label text-muted">NO PREVIEW</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-card via-transparent to-transparent" />
           {project.status && (
             <span className="absolute top-3 right-3 font-mono-label text-[10px] px-2 py-1 bg-charcoal/80 text-green border border-green/30">
               {project.status}
