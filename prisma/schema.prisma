@@ -296,6 +296,7 @@ model ContactMessage {
   @@index([read, createdAt])
 }
 
+
 model BlogPost {
   id            String        @id @default(cuid())
   title         String
