@@ -28,7 +28,7 @@ export function WhatWeBuild() {
           </motion.div>
 
           {/* Connector line */}
-          <div className="w-px h-12 bg-gradient-to-b from-cyan to-card-border" />
+          <div className="w-px h-12 bg-linear-to-b from-cyan to-card-border" />
 
           {/* Child nodes grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full max-w-4xl">
