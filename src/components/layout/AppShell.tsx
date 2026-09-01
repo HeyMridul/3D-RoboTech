@@ -8,25 +8,37 @@ import { CommandPalette } from "@/components/ui/CommandPalette";
 import { SystemLoader } from "@/components/ui/SystemLoader";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const [loaded, setLoaded] = useState(false);
+  const [booted, setBooted] = useState(false);
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
 
-  if (isAdmin) {
+  // The CMS has its own chrome and should never show the boot sequence.
+  if (pathname.startsWith("/admin")) {
     return <>{children}</>;
   }
 
   return (
     <>
-      {!loaded && <SystemLoader onComplete={() => setLoaded(true)} />}
-      {loaded && (
-        <>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CommandPalette />
-        </>
-      )}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:bg-cyan focus:text-charcoal focus:px-4 focus:py-2 focus:font-mono-label focus:text-xs"
+      >
+        Skip to content
+      </a>
+
+      {/*
+        The page is always rendered. The boot sequence is a veil painted over
+        it, never a gate in front of it — gating children kept the markup out
+        of the server response entirely, so crawlers and screen readers saw an
+        empty document and LCP waited on an animation.
+      */}
+      <Navbar />
+      <main id="main" className="flex-1">
+        {children}
+      </main>
+      <Footer />
+      <CommandPalette />
+
+      {!booted && <SystemLoader onComplete={() => setBooted(true)} />}
     </>
   );
 }

@@ -62,6 +62,11 @@ export function SystemLoader({ onComplete }: { onComplete: () => void }) {
         initial={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
+        /*
+         * Decorative: the real content is already mounted underneath, so
+         * assistive tech should read that rather than this animation.
+         */
+        aria-hidden="true"
         className="fixed inset-0 z-[200] bg-charcoal flex flex-col items-center justify-center"
       >
         <p className="font-mono-label text-cyan mb-6 animate-pulse">

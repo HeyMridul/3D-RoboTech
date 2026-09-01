@@ -48,13 +48,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        // Throttle credential stuffing per source address.
+        /*
+         * Two budgets. The per-account one is tight, because that is what
+         * actually stops a brute force. The per-IP one is deliberately loose:
+         * a university shares a handful of NAT addresses, so a strict IP cap
+         * would lock out the whole campus instead of the attacker.
+         */
         const headerList = await headers();
         const ip =
           headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
           headerList.get("x-real-ip") ||
           "unknown";
-        if (!checkRateLimit(`login:${ip}`, 5, 5 * 60_000).ok) {
+
+        const email = parsed.data.email.toLowerCase();
+        const accountOk = checkRateLimit(`login:account:${email}`, 8, 10 * 60_000).ok;
+        const sourceOk = checkRateLimit(`login:ip:${ip}`, 60, 10 * 60_000).ok;
+
+        if (!accountOk || !sourceOk) {
           throw new Error("Too many sign-in attempts. Try again shortly.");
         }
 

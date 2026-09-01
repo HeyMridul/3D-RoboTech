@@ -254,6 +254,15 @@ export function isResourceName(value: string): value is ResourceName {
   return Object.hasOwn(RESOURCES, value);
 }
 
+/**
+ * `satisfies` above preserves each entry's literal type so the keys stay
+ * exact, which means indexing yields a union missing the optional members.
+ * This widens back to the interface for callers that just need the config.
+ */
+export function getResourceConfig(name: ResourceName): ResourceConfig {
+  return RESOURCES[name] as ResourceConfig;
+}
+
 /** Derives a slug from the configured source field, when one was not given. */
 export function resolveSlug(config: ResourceConfig, data: Data): string | undefined {
   if (!config.slugFrom) return undefined;

@@ -1,11 +1,10 @@
 import { requireAuth } from "@/lib/auth";
 import { ApiError, parseJsonBody } from "@/lib/api-utils";
 import {
-  RESOURCES,
+  getResourceConfig,
   isResourceName,
   resolveSlug,
   type ResourceConfig,
-  type ResourceName,
 } from "./resources";
 
 type Data = Record<string, unknown>;
@@ -14,7 +13,7 @@ export function getResource(name: string): ResourceConfig {
   if (!isResourceName(name)) {
     throw new ApiError(404, `Unknown resource "${name}".`);
   }
-  return RESOURCES[name as ResourceName] as ResourceConfig;
+  return getResourceConfig(name);
 }
 
 /** Soft-deleted rows are invisible to every admin read. */
