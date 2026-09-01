@@ -33,6 +33,17 @@ declare module "@auth/core/jwt" {
 const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8.5vC0Xh0Uq1kZ8Wl8h9y0Q1kZ8Wl8";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  /*
+   * Auth.js refuses to infer its own origin from the Host header unless told
+   * to, so a self-hosted production build returns UntrustedHost for every
+   * session lookup and the CMS cannot be signed into at all. Vercel sets this
+   * automatically; anywhere else it must be explicit.
+   *
+   * This makes the Host header trusted, so the reverse proxy in front of the
+   * app must set it rather than passing a client-supplied value through. Set
+   * AUTH_URL to pin the origin if that is not guaranteed.
+   */
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/admin/login",

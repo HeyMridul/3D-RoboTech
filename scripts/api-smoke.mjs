@@ -3,7 +3,7 @@
  * the seeded credentials, then exercises the generic CRUD surface.
  * Usage: node scripts/api-smoke.mjs
  */
-const BASE = "http://localhost:3000";
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 
 let cookies = new Map();
 

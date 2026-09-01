@@ -6,6 +6,7 @@ import { TechBadge } from "@/components/ui/TechBadge";
 import { ButtonLink } from "@/components/ui/Button";
 import { ExternalLink } from "lucide-react";
 import { GithubIcon } from "@/components/ui/BrandIcons";
+import { ProjectModel } from "@/components/projects/ProjectModel";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,18 @@ export default async function ProjectDetailPage({
                 </div>
               </div>
             ))}
+
+            {project.modelUrl && (
+              <section aria-labelledby="model-heading">
+                <h2
+                  id="model-heading"
+                  className="font-mono-label text-[11px] text-cyan mb-3"
+                >
+                  3D MODEL
+                </h2>
+                <ProjectModel url={project.modelUrl} />
+              </section>
+            )}
 
             {project.gallery.length > 0 && (
               <div>

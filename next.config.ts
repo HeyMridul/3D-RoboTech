@@ -11,7 +11,13 @@ const isDev = process.env.NODE_ENV === "development";
  */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  /*
+   * 'wasm-unsafe-eval' is needed in production: three.js instantiates
+   * WebAssembly for its Draco and KTX2 decoders, and a plain script-src
+   * blocks WebAssembly.instantiate outright. It permits WASM compilation
+   * only — unlike 'unsafe-eval', it does not re-enable eval() for JavaScript.
+   */
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",

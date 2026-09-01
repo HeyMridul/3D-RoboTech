@@ -106,6 +106,9 @@ async function main() {
       problem: "Manual crop monitoring is time-consuming and inconsistent across large fields.",
       solution: "Built an ESP32-powered rover with CV-based plant health detection and cloud telemetry.",
       tech: ["ESP32", "Python", "OpenCV", "ROS"],
+      // Placeholder geometry so the component viewer is exercisable before a
+      // real CAD export exists. Regenerate with scripts/make-demo-model.mjs.
+      modelUrl: "/models/demo-rover.glb",
     },
     {
       title: "Smart Campus Navigation Drone",
@@ -195,9 +198,12 @@ async function main() {
 
   for (const [i, p] of projectData.entries()) {
     const category = categories.find((c) => c.slug === p.categorySlug);
+    const modelUrl = "modelUrl" in p ? p.modelUrl : null;
     const project = await prisma.project.upsert({
       where: { slug: p.slug },
-      update: {},
+      // Re-running the seed should pick up edits to this file rather than
+      // silently keeping the first version of the row.
+      update: { modelUrl },
       create: {
         title: p.title,
         slug: p.slug,
@@ -210,6 +216,7 @@ async function main() {
         categoryId: category?.id,
         problem: p.problem,
         solution: p.solution,
+        modelUrl,
         publishStatus: PublishStatus.PUBLISHED,
         createdById: admin.id,
       },
