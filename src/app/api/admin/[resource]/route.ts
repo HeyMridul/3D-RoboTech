@@ -1,5 +1,10 @@
 import { auth } from "@/lib/auth";
-import { ApiError, handleApiError, successResponse } from "@/lib/api-utils";
+import {
+  ApiError,
+  handleApiError,
+  parseJsonBody,
+  successResponse,
+} from "@/lib/api-utils";
 import {
   createManagedResource,
   isManagedResource,
@@ -43,7 +48,7 @@ export async function POST(
       throw new ApiError(404, "Unknown CMS resource");
     }
 
-    const data = await request.json();
+    const data = await parseJsonBody(request);
     const result = await createManagedResource(
       resource,
       data,

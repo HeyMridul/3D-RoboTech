@@ -224,6 +224,43 @@ export async function getCategories() {
   );
 }
 
+export async function getBlogPosts() {
+  return safeQuery(
+    () =>
+      prisma.blogPost.findMany({
+        where: {
+          publishStatus: PublishStatus.PUBLISHED,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          excerpt: true,
+          coverImage: true,
+          publishedAt: true,
+        },
+        orderBy: { publishedAt: "desc" },
+      }),
+    [],
+  );
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.blogPost.findFirst({
+        where: {
+          slug,
+          publishStatus: PublishStatus.PUBLISHED,
+          deletedAt: null,
+        },
+        include: { author: { select: { name: true } } },
+      }),
+    null,
+  );
+}
+
 export async function getSiteSettings() {
   return safeQuery(
     async () => {

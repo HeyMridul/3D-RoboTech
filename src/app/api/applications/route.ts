@@ -4,6 +4,7 @@ import {
   successResponse,
   rateLimit,
   getClientIp,
+  parseJsonBody,
   sanitizeString,
 } from "@/lib/api-utils";
 import { prisma } from "@/lib/db/prisma";
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
       return successResponse({ error: "Too many requests" }, 429);
     }
 
-    const body = await request.json();
+    const body = await parseJsonBody(request);
     const data = applicationSchema.parse(body);
 
     const application = await prisma.application.create({

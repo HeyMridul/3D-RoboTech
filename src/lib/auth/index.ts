@@ -28,6 +28,11 @@ declare module "@auth/core/jwt" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret:
+    process.env.AUTH_SECRET ||
+    (process.env.NODE_ENV === "development"
+      ? "traic-development-only-secret-change-before-deploy"
+      : undefined),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/admin/login",

@@ -16,7 +16,7 @@ export function DigitalGrid({ size = 30, divisions = 30 }: DigitalGridProps) {
       cellColor="#1a1f28"
       sectionSize={5}
       sectionThickness={1}
-      sectionColor="#00d4ff33"
+      sectionColor="#00d4ff"
       fadeDistance={25}
       fadeStrength={1}
       followCamera={false}

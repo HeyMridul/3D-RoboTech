@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 
@@ -11,6 +11,7 @@ const ALLOWED_TYPES = [
   "model/gltf-binary",
   "application/octet-stream",
 ];
+const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".glb"];
 
 export interface StorageResult {
   url: string;
@@ -24,7 +25,11 @@ export async function uploadFile(file: File): Promise<StorageResult> {
     throw new Error("File too large. Maximum size is 5MB.");
   }
 
-  if (!ALLOWED_TYPES.includes(file.type) && !file.name.endsWith(".glb")) {
+  const ext = path.extname(file.name).toLowerCase();
+  if (
+    !ALLOWED_EXTENSIONS.includes(ext) ||
+    (!ALLOWED_TYPES.includes(file.type) && ext !== ".glb")
+  ) {
     throw new Error("File type not allowed.");
   }
 
@@ -35,7 +40,6 @@ export async function uploadFile(file: File): Promise<StorageResult> {
       process.env.STORAGE_LOCAL_PATH || path.join(process.cwd(), "public/uploads");
     await mkdir(uploadDir, { recursive: true });
 
-    const ext = path.extname(file.name);
     const filename = `${randomUUID()}${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
     const filePath = path.join(uploadDir, filename);
@@ -50,4 +54,14 @@ export async function uploadFile(file: File): Promise<StorageResult> {
   }
 
   throw new Error(`Storage provider "${provider}" not configured.`);
+}
+
+export async function deleteFile(url: string) {
+  const provider = process.env.STORAGE_PROVIDER || "local";
+  if (provider !== "local" || !url.startsWith("/uploads/")) return;
+
+  const uploadDir =
+    process.env.STORAGE_LOCAL_PATH || path.join(process.cwd(), "public/uploads");
+  const filename = path.basename(url);
+  await unlink(path.join(uploadDir, filename)).catch(() => undefined);
 }

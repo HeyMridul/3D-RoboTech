@@ -42,6 +42,26 @@ export function successResponse<T>(data: T, status = 200) {
   return NextResponse.json(data, { status });
 }
 
+export async function parseJsonBody(
+  request: Request,
+  maxBytes = 64 * 1024,
+): Promise<unknown> {
+  const declaredLength = Number(request.headers.get("content-length") || 0);
+  if (declaredLength > maxBytes) {
+    throw new ApiError(413, "Request body too large");
+  }
+
+  const text = await request.text();
+  if (new TextEncoder().encode(text).byteLength > maxBytes) {
+    throw new ApiError(413, "Request body too large");
+  }
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    throw new ApiError(400, "Invalid JSON body");
+  }
+}
+
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 export function rateLimit(
@@ -50,6 +70,11 @@ export function rateLimit(
   windowMs = 60_000,
 ): boolean {
   const now = Date.now();
+  if (rateLimitMap.size > 10_000) {
+    for (const [entryKey, value] of rateLimitMap) {
+      if (value.resetAt < now) rateLimitMap.delete(entryKey);
+    }
+  }
   const entry = rateLimitMap.get(key);
 
   if (!entry || now > entry.resetAt) {

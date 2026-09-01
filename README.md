@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TRAIC — Robotics & Innovation Platform
 
-## Getting Started
+Full-stack digital command center for the TRAIC Robotics & Innovation Club.
+It combines an adaptive React Three Fiber laboratory experience with
+CMS-driven projects, learning, events, achievements, members, applications,
+articles, media, and an authenticated administration surface.
 
-First, run the development server:
+## Local setup
 
 ```bash
+cp .env.example .env
+docker compose up -d
+npm install
+npm run db:migrate
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Seed records are explicitly labeled as demo content. Production seeding
+requires `ADMIN_PASSWORD`; never deploy the development credential.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Next.js 16 App Router, React 19, and TypeScript
+- React Three Fiber, Drei, Three.js, Framer Motion, and Tailwind CSS 4
+- typed Route Handlers with Zod validation
+- PostgreSQL, Prisma, indexed relations, migrations, and soft deletion
+- Auth.js credentials sessions, bcrypt, RBAC, route protection, and secure headers
+- replaceable storage adapter with validated 5 MB image/GLB uploads
 
-## Learn More
+Heavy 3D code is dynamically loaded on the client. Device pixel ratio,
+particles, antialiasing, and frame loops adapt for mobile and reduced-motion
+users.
 
-To learn more about Next.js, take a look at the following resources:
+Public queries only return published, non-deleted records. Admins and editors
+can manage projects, members, events, workshops, achievements, blog posts,
+gallery entries, media, applications, messages, and settings. Admin user
+management is restricted to the `ADMIN` role.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The included in-memory public-form limiter is suitable for one application
+process. Multi-instance deployments should replace it with a shared
+Redis-backed implementation.

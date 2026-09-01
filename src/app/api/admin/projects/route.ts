@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { projectSchema } from "@/lib/validation/schemas";
-import { handleApiError, successResponse } from "@/lib/api-utils";
+import {
+  handleApiError,
+  parseJsonBody,
+  successResponse,
+} from "@/lib/api-utils";
 import { slugify } from "@/lib/utils";
 import { PublishStatus } from "@prisma/client";
 
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
       return successResponse({ error: "Forbidden" }, 403);
     }
 
-    const body = await request.json();
+    const body = await parseJsonBody(request);
     const data = projectSchema.parse(body);
 
     const slug = data.slug || slugify(data.title);
@@ -70,6 +74,15 @@ export async function POST(request: Request) {
               technologies: {
                 create: data.technologyIds.map((technologyId) => ({
                   technologyId,
+                })),
+              },
+            }
+          : {}),
+        ...(data.contributorIds?.length
+          ? {
+              contributors: {
+                create: data.contributorIds.map((memberId) => ({
+                  memberId,
                 })),
               },
             }

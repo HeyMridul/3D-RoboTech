@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import { ApplicationActions } from "@/components/admin/InboxActions";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +37,7 @@ export default async function AdminApplicationsPage() {
                   <h3 className="font-semibold">{app.name}</h3>
                   <p className="text-sm text-muted">{app.email}</p>
                 </div>
-                <span className="font-mono-label text-[10px] text-cyan">
-                  {app.status}
-                </span>
+                <ApplicationActions id={app.id} status={app.status} />
               </div>
               <p className="font-mono-label text-[10px] text-muted mb-2">
                 {app.year}{" // "}{app.branch}

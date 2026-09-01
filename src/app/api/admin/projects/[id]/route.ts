@@ -1,6 +1,11 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
-import { ApiError, handleApiError, successResponse } from "@/lib/api-utils";
+import {
+  ApiError,
+  handleApiError,
+  parseJsonBody,
+  successResponse,
+} from "@/lib/api-utils";
 import { projectSchema } from "@/lib/validation/schemas";
 import { PublishStatus } from "@prisma/client";
 
@@ -19,7 +24,7 @@ export async function PATCH(
   try {
     await authorizeEditor();
     const { id } = await context.params;
-    const data = projectSchema.partial().parse(await request.json());
+    const data = projectSchema.partial().parse(await parseJsonBody(request));
     const { technologyIds, contributorIds, publishStatus, ...fields } = data;
 
     const project = await prisma.project.update({

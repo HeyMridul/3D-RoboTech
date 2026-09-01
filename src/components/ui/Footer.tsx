@@ -22,7 +22,7 @@ export function Footer() {
           <div>
             <p className="font-mono-label text-cyan mb-4">NAVIGATE</p>
             <ul className="space-y-2">
-              {["Projects", "Events", "Workshops", "Members", "Achievements", "Join"].map(
+              {["Projects", "Events", "Workshops", "Members", "Achievements", "Blog", "Join", "Contact"].map(
                 (item) => (
                   <li key={item}>
                     <Link

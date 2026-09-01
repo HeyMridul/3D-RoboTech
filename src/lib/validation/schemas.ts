@@ -133,6 +133,42 @@ export const achievementSchema = z.object({
   publishStatus: publishStatusSchema.default("DRAFT"),
 });
 
+export const blogPostSchema = z.object({
+  title: z.string().min(2).max(200),
+  slug: z.string().min(2).max(200).optional(),
+  excerpt: z.string().max(500).optional().nullable(),
+  content: z.string().min(20).max(100000),
+  coverImage: optionalUrl,
+  publishStatus: publishStatusSchema.default("DRAFT"),
+});
+
+export const galleryItemSchema = z.object({
+  title: z.string().max(200).optional().nullable(),
+  caption: z.string().max(1000).optional().nullable(),
+  imageUrl: z.string().url(),
+  projectId: z.string().optional().nullable(),
+  order: z.number().int().default(0),
+});
+
+export const siteSettingSchema = z.object({
+  key: z.string().regex(/^[a-z0-9_.-]+$/).min(2).max(100),
+  value: z.string().max(20000),
+});
+
+export const adminUserSchema = z.object({
+  email: z.string().email().max(255),
+  name: z.string().min(2).max(120).optional().nullable(),
+  password: z
+    .string()
+    .min(12)
+    .max(128)
+    .regex(/[a-z]/)
+    .regex(/[A-Z]/)
+    .regex(/[0-9]/)
+    .optional(),
+  role: z.enum(["ADMIN", "EDITOR", "VIEWER"]),
+});
+
 export const applicationStatusSchema = z.object({
   status: z.enum(["PENDING", "REVIEWING", "ACCEPTED", "REJECTED"]),
 });

@@ -4,7 +4,14 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 type Item = Record<string, unknown> & { id: string };
-type Resource = "members" | "events" | "workshops" | "achievements";
+type Resource =
+  | "members"
+  | "events"
+  | "workshops"
+  | "achievements"
+  | "blog"
+  | "gallery"
+  | "settings";
 type Field = {
   name: string;
   label: string;
@@ -66,6 +73,23 @@ const fields: Record<Resource, Field[]> = {
     { name: "rank", label: "Result / rank" },
     { name: "organization", label: "Organization" },
   ],
+  blog: [
+    { name: "title", label: "Title", required: true },
+    { name: "excerpt", label: "Excerpt", type: "textarea" },
+    { name: "content", label: "Article", type: "textarea", required: true },
+    { name: "coverImage", label: "Cover image URL" },
+  ],
+  gallery: [
+    { name: "title", label: "Title" },
+    { name: "caption", label: "Caption", type: "textarea" },
+    { name: "imageUrl", label: "Image URL", required: true },
+    { name: "projectId", label: "Project ID" },
+    { name: "order", label: "Display order", type: "number" },
+  ],
+  settings: [
+    { name: "key", label: "Setting key", required: true },
+    { name: "value", label: "Value", type: "textarea", required: true },
+  ],
 };
 
 const defaults: Record<Resource, Record<string, unknown>> = {
@@ -73,6 +97,9 @@ const defaults: Record<Resource, Record<string, unknown>> = {
   events: { type: "OTHER", publishStatus: "DRAFT", featured: false },
   workshops: { level: "BEGINNER", registrationOpen: true, publishStatus: "DRAFT", order: 0 },
   achievements: { publishStatus: "DRAFT", featured: false, order: 0 },
+  blog: { publishStatus: "DRAFT" },
+  gallery: { order: 0 },
+  settings: {},
 };
 
 function formValue(item: Item | null, field: Field) {
@@ -146,7 +173,7 @@ export function ResourceManager({
   }
 
   async function remove(item: Item) {
-    if (!window.confirm(`Archive ${String(item.title || item.name)}?`)) return;
+    if (!window.confirm(`Archive ${String(item.title || item.name || item.key)}?`)) return;
     const response = await fetch(`/api/admin/${resource}/${item.id}`, { method: "DELETE" });
     if (response.ok) setItems((current) => current.filter((entry) => entry.id !== item.id));
   }
@@ -192,15 +219,17 @@ export function ResourceManager({
         {items.map((item) => (
           <article key={item.id} className="technical-panel flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-display text-lg font-semibold">{String(item.title || item.name)}</h2>
+              <h2 className="font-display text-lg font-semibold">{String(item.title || item.name || item.key)}</h2>
               <p className="font-mono-label mt-1 text-[9px] text-muted">
                 {String(item.publishStatus || item.status || "")}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => updateStatus(item, item.publishStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED")} className="border border-card-border px-3 py-2 font-mono-label text-[9px] text-cyan">
-                {item.publishStatus === "PUBLISHED" ? "UNPUBLISH" : "PUBLISH"}
-              </button>
+              {"publishStatus" in item && (
+                <button onClick={() => updateStatus(item, item.publishStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED")} className="border border-card-border px-3 py-2 font-mono-label text-[9px] text-cyan">
+                  {item.publishStatus === "PUBLISHED" ? "UNPUBLISH" : "PUBLISH"}
+                </button>
+              )}
               <button onClick={() => { setEditing(item); setShowForm(true); }} className="border border-card-border px-3 py-2 font-mono-label text-[9px]">EDIT</button>
               <button onClick={() => remove(item)} className="border border-red/30 px-3 py-2 font-mono-label text-[9px] text-red">ARCHIVE</button>
             </div>

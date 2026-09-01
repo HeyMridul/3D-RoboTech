@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { formatDate } from "@/lib/utils";
+import { MessageActions } from "@/components/admin/InboxActions";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,9 @@ export default async function AdminMessagesPage() {
                 </p>
               )}
               <p className="text-sm text-muted">{msg.message}</p>
+              <div className="mt-4">
+                <MessageActions id={msg.id} read={msg.read} />
+              </div>
             </div>
           ))}
         </div>

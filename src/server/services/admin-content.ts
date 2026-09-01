@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
 import {
   achievementSchema,
+  blogPostSchema,
   eventSchema,
+  galleryItemSchema,
   memberSchema,
+  siteSettingSchema,
   workshopSchema,
 } from "@/lib/validation/schemas";
 import { ApiError, sanitizeString } from "@/lib/api-utils";
@@ -13,6 +16,9 @@ export const managedResources = [
   "events",
   "workshops",
   "achievements",
+  "blog",
+  "gallery",
+  "settings",
 ] as const;
 
 export type ManagedResource = (typeof managedResources)[number];
@@ -43,6 +49,17 @@ export async function listManagedResource(resource: ManagedResource) {
         where: { deletedAt: null },
         orderBy: [{ year: "desc" }, { order: "asc" }],
       });
+    case "blog":
+      return prisma.blogPost.findMany({
+        where: { deletedAt: null },
+        orderBy: { updatedAt: "desc" },
+      });
+    case "gallery":
+      return prisma.galleryItem.findMany({
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      });
+    case "settings":
+      return prisma.siteSetting.findMany({ orderBy: { key: "asc" } });
   }
 }
 
@@ -120,6 +137,29 @@ export async function createManagedResource(
         },
       });
     }
+    case "blog": {
+      const data = blogPostSchema.parse(input);
+      return prisma.blogPost.create({
+        data: {
+          ...data,
+          slug: data.slug || slugify(data.title),
+          title: sanitizeString(data.title),
+          excerpt: data.excerpt ? sanitizeString(data.excerpt) : null,
+          coverImage: data.coverImage || null,
+          authorId: userId,
+          publishedAt:
+            data.publishStatus === "PUBLISHED" ? new Date() : null,
+        },
+      });
+    }
+    case "gallery": {
+      const data = galleryItemSchema.parse(input);
+      return prisma.galleryItem.create({ data });
+    }
+    case "settings": {
+      const data = siteSettingSchema.parse(input);
+      return prisma.siteSetting.create({ data });
+    }
   }
 }
 
@@ -145,6 +185,25 @@ export async function updateManagedResource(
       const data = achievementSchema.partial().parse(input);
       return prisma.achievement.update({ where: { id }, data });
     }
+    case "blog": {
+      const data = blogPostSchema.partial().parse(input);
+      return prisma.blogPost.update({
+        where: { id },
+        data: {
+          ...data,
+          publishedAt:
+            data.publishStatus === "PUBLISHED" ? new Date() : undefined,
+        },
+      });
+    }
+    case "gallery": {
+      const data = galleryItemSchema.partial().parse(input);
+      return prisma.galleryItem.update({ where: { id }, data });
+    }
+    case "settings": {
+      const data = siteSettingSchema.partial().parse(input);
+      return prisma.siteSetting.update({ where: { id }, data });
+    }
   }
 }
 
@@ -162,6 +221,12 @@ export async function deleteManagedResource(
       return prisma.workshop.update({ where: { id }, data: { deletedAt } });
     case "achievements":
       return prisma.achievement.update({ where: { id }, data: { deletedAt } });
+    case "blog":
+      return prisma.blogPost.update({ where: { id }, data: { deletedAt } });
+    case "gallery":
+      return prisma.galleryItem.delete({ where: { id } });
+    case "settings":
+      return prisma.siteSetting.delete({ where: { id } });
     default:
       throw new ApiError(404, "Unknown CMS resource");
   }

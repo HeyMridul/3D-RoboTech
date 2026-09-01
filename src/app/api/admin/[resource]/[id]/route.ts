@@ -1,5 +1,10 @@
 import { auth } from "@/lib/auth";
-import { ApiError, handleApiError, successResponse } from "@/lib/api-utils";
+import {
+  ApiError,
+  handleApiError,
+  parseJsonBody,
+  successResponse,
+} from "@/lib/api-utils";
 import {
   deleteManagedResource,
   isManagedResource,
@@ -28,7 +33,7 @@ export async function PATCH(
     const result = await updateManagedResource(
       resource,
       id,
-      await request.json(),
+      await parseJsonBody(request),
     );
     return successResponse(result);
   } catch (error) {
