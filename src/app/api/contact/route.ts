@@ -2,6 +2,7 @@ import { contactSchema } from "@/lib/validation/schemas";
 import {
   handleApiError,
   successResponse,
+  errorResponse,
   rateLimit,
   getClientIp,
   sanitizeString,
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
     if (!rateLimit(`contact:${ip}`, 5, 60_000)) {
-      return successResponse({ error: "Too many requests" }, 429);
+      return errorResponse("Too many requests", 429);
     }
 
     const body = await request.json();

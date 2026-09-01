@@ -52,7 +52,7 @@ export default async function MembersPage() {
                     {member.name}
                   </h3>
                   <p className="font-mono-label text-[10px] text-muted mt-1">
-                    {member.role} // {member.category.replace("_", " ")}
+                    {member.role} {"//"} {member.category.replace("_", " ")}
                   </p>
                   <div className="flex flex-wrap gap-1 mt-3">
                     {member.skills.slice(0, 4).map((s) => (

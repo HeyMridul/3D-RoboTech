@@ -3,6 +3,7 @@ import { getWorkshops } from "@/server/services/content";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import { LearningPath } from "@/components/ui/LearningPath";
 
 export const metadata = { title: "Workshops" };
 export const dynamic = "force-dynamic";
@@ -18,6 +19,11 @@ export default async function WorkshopsPage() {
           title="Learn. Build. Repeat."
           description="Technical workshops and learning tracks for every skill level."
         />
+
+        <div className="mb-16">
+          <p className="font-mono-label text-cyan mb-4">INTERACTIVE ROADMAP</p>
+          <LearningPath />
+        </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {Object.entries(siteConfig.workshopTracks).map(([track, items]) => (

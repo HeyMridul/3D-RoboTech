@@ -20,10 +20,16 @@ export function ParticleField({ count, color = "#00d4ff" }: ParticleFieldProps) 
     const pos = new Float32Array(particleCount * 3);
     const vel = new Float32Array(particleCount);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      vel[i] = Math.random() * 0.02 + 0.005;
+      const n = Math.sin(i * 12.9898) * 43758.5453;
+      const r1 = n - Math.floor(n);
+      const n2 = Math.sin(i * 78.233) * 43758.5453;
+      const r2 = n2 - Math.floor(n2);
+      const n3 = Math.sin(i * 39.346) * 43758.5453;
+      const r3 = n3 - Math.floor(n3);
+      pos[i * 3] = (r1 - 0.5) * 20;
+      pos[i * 3 + 1] = (r2 - 0.5) * 20;
+      pos[i * 3 + 2] = (r3 - 0.5) * 20;
+      vel[i] = r1 * 0.02 + 0.005;
     }
     return [pos, vel];
   }, [particleCount]);

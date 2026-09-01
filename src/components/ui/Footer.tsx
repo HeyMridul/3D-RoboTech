@@ -22,7 +22,7 @@ export function Footer() {
           <div>
             <p className="font-mono-label text-cyan mb-4">NAVIGATE</p>
             <ul className="space-y-2">
-              {["Projects", "Events", "Workshops", "Members", "Achievements", "Join"].map(
+              {["Projects", "Events", "Workshops", "Members", "Achievements", "Join", "Contact"].map(
                 (item) => (
                   <li key={item}>
                     <Link
@@ -61,7 +61,7 @@ export function Footer() {
             © {new Date().getFullYear()} TRAIC — Robotics & Innovation Club
           </p>
           <p className="font-mono-label text-[10px] text-muted">
-            LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+            LAT {siteConfig.location.lat} {"//"} LON {siteConfig.location.lon}
           </p>
         </div>
       </div>

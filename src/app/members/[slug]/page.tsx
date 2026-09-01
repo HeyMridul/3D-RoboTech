@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { getMemberBySlug } from "@/server/services/content";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { Github, Linkedin, ExternalLink } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
+import { ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function MemberProfilePage({
                   className="p-2 border border-card-border hover:border-cyan text-muted hover:text-cyan transition-colors"
                   aria-label="GitHub"
                 >
-                  <Github size={18} />
+                  <GithubIcon size={18} />
                 </a>
               )}
               {member.linkedinUrl && (
@@ -79,7 +80,7 @@ export default async function MemberProfilePage({
                   className="p-2 border border-card-border hover:border-cyan text-muted hover:text-cyan transition-colors"
                   aria-label="LinkedIn"
                 >
-                  <Linkedin size={18} />
+                  <LinkedinIcon size={18} />
                 </a>
               )}
               {member.portfolioUrl && (

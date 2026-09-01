@@ -42,7 +42,7 @@ const categoryDetails: Record<string, { description: string; tech: string[] }> =
 };
 
 export function WhoWeAre() {
-  const [active, setActive] = useState(siteConfig.traicCore[0].key);
+  const [active, setActive] = useState<string>(siteConfig.traicCore[0].key);
 
   const details = categoryDetails[active];
 
@@ -84,7 +84,7 @@ export function WhoWeAre() {
               className="border border-card-border bg-card p-8"
             >
               <p className="font-mono-label text-cyan mb-4">
-                // {active.toUpperCase()}
+                {`// ${active.toUpperCase()}`}
               </p>
               <p className="text-lg text-foreground mb-6 leading-relaxed">
                 {details.description}

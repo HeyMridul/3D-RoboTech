@@ -2,12 +2,15 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const ALLOWED_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
+  "image/avif",
+  "video/mp4",
+  "video/webm",
   "model/gltf-binary",
   "application/octet-stream",
 ];
@@ -31,8 +34,7 @@ export async function uploadFile(file: File): Promise<StorageResult> {
   const provider = process.env.STORAGE_PROVIDER || "local";
 
   if (provider === "local") {
-    const uploadDir =
-      process.env.STORAGE_LOCAL_PATH || path.join(process.cwd(), "public/uploads");
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
 
     const ext = path.extname(file.name);

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import { ApplicationActions } from "./ApplicationActions";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export default async function AdminApplicationsPage() {
                 </span>
               </div>
               <p className="font-mono-label text-[10px] text-muted mb-2">
-                {app.year} // {app.branch}
+                {app.year} {"//"} {app.branch}
               </p>
               <p className="text-sm text-muted mb-3">{app.message}</p>
               <div className="flex flex-wrap gap-1">
@@ -54,6 +55,7 @@ export default async function AdminApplicationsPage() {
                   </span>
                 ))}
               </div>
+              <ApplicationActions id={app.id} status={app.status} />
             </div>
           ))}
         </div>

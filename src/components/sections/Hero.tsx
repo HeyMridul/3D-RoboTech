@@ -33,7 +33,7 @@ export function Hero({ stats }: HeroProps) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="font-mono-label text-cyan mb-4">
-              TRAIC // ROBOTICS & INNOVATION CLUB
+              TRAIC {"//"} ROBOTICS & INNOVATION CLUB
             </p>
             <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-none mb-6">
               BUILD BEYOND
@@ -65,13 +65,20 @@ export function Hero({ stats }: HeroProps) {
               <p>MEMBERS: {displayStats.members}+</p>
               <p>WORKSHOPS: {displayStats.workshops}+</p>
               <p>
-                LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+                LAT {siteConfig.location.lat} {"//"} LON {siteConfig.location.lon}
               </p>
             </div>
           </div>
 
           <div className="hidden lg:block">
             <SystemStatus items={[...siteConfig.systemStatus]} />
+            <div className="mt-6 font-mono-label text-[10px] text-muted border border-card-border bg-card/70 p-4 space-y-1">
+              <p className="text-cyan">TRAIC {"//"} SYSTEM ONLINE</p>
+              <p>ROBOTICS & INNOVATION LAB</p>
+              <p>LAT {siteConfig.location.lat}</p>
+              <p>LON {siteConfig.location.lon}</p>
+              <p>STATUS: OPERATIONAL</p>
+            </div>
           </div>
         </div>
       </div>

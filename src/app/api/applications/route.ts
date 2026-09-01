@@ -2,6 +2,7 @@ import { applicationSchema } from "@/lib/validation/schemas";
 import {
   handleApiError,
   successResponse,
+  errorResponse,
   rateLimit,
   getClientIp,
   sanitizeString,
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
     if (!rateLimit(`application:${ip}`, 3, 60_000)) {
-      return successResponse({ error: "Too many requests" }, 429);
+      return errorResponse("Too many requests", 429);
     }
 
     const body = await request.json();
@@ -39,5 +40,5 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  return successResponse({ error: "Method not allowed" }, 405);
+    return errorResponse("Method not allowed", 405);
 }

@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TRAIC — Robotics & Innovation Platform
 
-## Getting Started
+Production-grade website and CMS for **TRAIC (The Robotics & Innovation Club)**.
 
-First, run the development server:
+The public site is a 3D-first engineering laboratory. Content (projects, members, events, workshops, achievements, applications, messages, media) is stored in PostgreSQL and managed from an authenticated admin dashboard.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- **Next.js 16** (App Router) + React 19 + TypeScript
+- **Three.js** via React Three Fiber / Drei for the robotics lab scenes
+- **Framer Motion** + **GSAP** for UI and scroll motion
+- **Tailwind CSS 4** design system
+- **PostgreSQL** + **Prisma**
+- **Auth.js (NextAuth v5)** credentials + JWT, RBAC (`ADMIN` / `EDITOR` / `VIEWER`)
+- **Zod** validation, rate limiting, local object-storage abstraction
+
+## Architecture
+
+```text
+src/
+  app/            public pages, admin CMS, route handlers
+  components/     UI, 3D engine, sections, admin CRUD
+  server/         content + admin services
+  lib/            auth, db, validation, storage, logging
+  config/         site identity + CMS field maps
+prisma/           schema + demo seed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Public pages never hardcode catalog data. Seed content is marked `[DEMO]` and a banner appears while `demo_mode=true`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+# set DATABASE_URL, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
 
-## Learn More
+# PostgreSQL (local or Docker)
+docker compose up -d
+# or: brew services start postgresql / systemd postgresql
 
-To learn more about Next.js, take a look at the following resources:
+npm install
+npx prisma generate
+npx prisma db push
+npx tsx prisma/seed.ts
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Admin: `/admin/login` using `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 
-## Deploy on Vercel
+## Security
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Secrets stay in environment variables (never shipped to the client)
+- Server-side Zod validation + sanitization
+- Rate limits on contact, applications, and uploads
+- RBAC on admin APIs (`VIEWER` read, `EDITOR` write, `ADMIN` delete)
+- Secure headers via `next.config.ts`
+- Upload MIME/size checks
+- Auth gate in `src/proxy.ts` plus per-page `auth()` checks
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Performance
+
+- Dynamic imports for all WebGL scenes
+- Reduced particle counts and lights on mobile
+- `prefers-reduced-motion` short-circuits loader, 3D loops, and canvas sims
+- Image formats AVIF/WebP; 3D models can be swapped in as Draco `.glb`
+
+Replace procedural models later by setting `modelUrl` on a project (`.glb` / `.gltf`).

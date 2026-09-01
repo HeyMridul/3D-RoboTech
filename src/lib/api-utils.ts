@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { logger } from "@/lib/logger";
 
 export class ApiError extends Error {
   constructor(
@@ -13,7 +14,10 @@ export class ApiError extends Error {
 }
 
 export function handleApiError(error: unknown) {
-  console.error("[API Error]", error);
+  logger.error("API error", {
+    name: error instanceof Error ? error.name : "unknown",
+    message: error instanceof Error ? error.message : String(error),
+  });
 
   if (error instanceof ApiError) {
     return NextResponse.json(
@@ -40,6 +44,10 @@ export function handleApiError(error: unknown) {
 
 export function successResponse<T>(data: T, status = 200) {
   return NextResponse.json(data, { status });
+}
+
+export function errorResponse(message: string, status: number, code?: string) {
+  return NextResponse.json({ error: message, code }, { status });
 }
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();

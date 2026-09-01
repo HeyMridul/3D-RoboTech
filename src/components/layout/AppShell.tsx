@@ -6,8 +6,16 @@ import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import { SystemLoader } from "@/components/ui/SystemLoader";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { DemoBanner } from "@/components/ui/DemoBanner";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  demoMode = false,
+}: {
+  children: React.ReactNode;
+  demoMode?: boolean;
+}) {
   const [loaded, setLoaded] = useState(false);
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
@@ -18,11 +26,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <a href="#main" className="skip-link">
+        SKIP TO CONTENT
+      </a>
+      <CustomCursor />
       {!loaded && <SystemLoader onComplete={() => setLoaded(true)} />}
       {loaded && (
         <>
+          {demoMode && <DemoBanner />}
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer />
           <CommandPalette />
         </>

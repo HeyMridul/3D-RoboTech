@@ -37,19 +37,28 @@ export default async function ProjectsPage({
         />
 
         <div className="flex flex-wrap gap-2 mb-10">
-          {filterOptions.map((cat) => (
-            <Link
-              key={cat}
-              href={`/projects?category=${cat === "ALL" ? "ALL" : cat}`}
-              className={`font-mono-label text-[10px] px-3 py-1.5 border transition-colors ${
-                category === cat
-                  ? "border-cyan text-cyan bg-cyan/5"
-                  : "border-card-border text-muted hover:border-cyan/30"
-              }`}
-            >
-              {cat}
-            </Link>
-          ))}
+          {filterOptions.map((cat) => {
+            const hrefValue =
+              cat === "ALL"
+                ? "ALL"
+                : cat.toLowerCase().replace(/\s+/g, "-").replace("/", "-");
+            const active =
+              category.toLowerCase().replace("/", "-") === hrefValue ||
+              category === cat;
+            return (
+              <Link
+                key={cat}
+                href={`/projects?category=${hrefValue}`}
+                className={`font-mono-label text-[10px] px-3 py-1.5 border transition-colors ${
+                  active
+                    ? "border-cyan text-cyan bg-cyan/5"
+                    : "border-card-border text-muted hover:border-cyan/30"
+                }`}
+              >
+                {cat}
+              </Link>
+            );
+          })}
         </div>
 
         {projects.length === 0 ? (

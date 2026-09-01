@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import { Providers } from "@/components/layout/Providers";
 import { siteConfig } from "@/config/site";
+import { getSiteSettings } from "@/server/services/content";
 import "./globals.css";
 
 const inter = Inter({
@@ -57,15 +58,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const settings = await getSiteSettings();
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.fullName,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    email: siteConfig.contact.email,
+    sameAs: Object.values(siteConfig.social),
+  };
+
   return (
     <html
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Providers>
-          <AppShell>{children}</AppShell>
+          <AppShell demoMode={settings.demo_mode === "true"}>{children}</AppShell>
         </Providers>
       </body>
     </html>

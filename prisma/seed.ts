@@ -210,6 +210,16 @@ async function main() {
         categoryId: category?.id,
         problem: p.problem,
         solution: p.solution,
+        architecture:
+          "Modular stack: sensing → compute → actuation → telemetry dashboard.",
+        hardware:
+          "Custom chassis, motor drivers, sensor suite, and power distribution.",
+        software:
+          "Control firmware, perception pipeline, and a web operations dashboard.",
+        challenges:
+          "Integration between hardware timing constraints and ML inference latency.",
+        results:
+          "[DEMO] Prototype validated in lab conditions. Replace with real TRAIC results.",
         publishStatus: PublishStatus.PUBLISHED,
         createdById: admin.id,
       },

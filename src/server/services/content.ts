@@ -62,7 +62,14 @@ export async function getProjects(filters?: {
           publishStatus: PublishStatus.PUBLISHED,
           deletedAt: null,
           ...(filters?.category && filters.category !== "ALL"
-            ? { category: { slug: filters.category.toLowerCase() } }
+            ? {
+                category: {
+                  slug: filters.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace("/", "-"),
+                },
+              }
             : {}),
           ...(filters?.search
             ? {

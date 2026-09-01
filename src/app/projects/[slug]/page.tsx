@@ -1,12 +1,29 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { ProjectModelViewer } from "@/components/three/ProjectModelViewer";
 import { getProjectBySlug } from "@/server/services/content";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { Button } from "@/components/ui/Button";
-import { ExternalLink, Github } from "lucide-react";
+import { GithubIcon } from "@/components/ui/SocialIcons";
+import { ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return { title: "Project" };
+  return {
+    title: project.title,
+    description: project.excerpt || project.description,
+  };
+}
 
 export default async function ProjectDetailPage({
   params,
@@ -30,7 +47,6 @@ export default async function ProjectDetailPage({
 
   return (
     <div className="pt-24 min-h-screen">
-      {/* Hero */}
       <div className="relative h-[50vh] min-h-[400px] bg-graphite">
         {project.imageUrl && (
           <Image
@@ -41,10 +57,10 @@ export default async function ProjectDetailPage({
             priority
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent" />
         <div className="container-traic relative h-full flex flex-col justify-end pb-12">
           <p className="font-mono-label text-cyan mb-2">
-            PROJECT // {project.slug.slice(0, 4).toUpperCase()}
+            PROJECT // {project.slug.slice(0, 8).toUpperCase()}
           </p>
           <h1 className="font-display text-4xl md:text-6xl font-bold mb-4">
             {project.title}
@@ -72,6 +88,8 @@ export default async function ProjectDetailPage({
                 {project.description}
               </p>
             </div>
+
+            <ProjectModelViewer modelUrl={project.modelUrl} />
 
             {sections.map((section) => (
               <div key={section.key}>
@@ -143,7 +161,7 @@ export default async function ProjectDetailPage({
                 {project.githubUrl && (
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" className="w-full">
-                      <Github size={16} /> GITHUB
+                      <GithubIcon size={16} /> GITHUB
                     </Button>
                   </a>
                 )}
