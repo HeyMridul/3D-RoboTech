@@ -42,9 +42,9 @@ const categoryDetails: Record<string, { description: string; tech: string[] }> =
 };
 
 export function WhoWeAre() {
-  const [active, setActive] = useState(siteConfig.traicCore[0].key);
+  const [active, setActive] = useState<string>(siteConfig.traicCore[0].key);
 
-  const details = categoryDetails[active];
+  const details = categoryDetails[active] ?? categoryDetails.robotics;
 
   return (
     <section id="about" className="section-padding bg-graphite/30">

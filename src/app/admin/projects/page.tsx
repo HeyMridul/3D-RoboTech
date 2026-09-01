@@ -1,16 +1,19 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import type { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { TechBadge } from "@/components/ui/TechBadge";
 
 export const dynamic = "force-dynamic";
 
+type ProjectRow = Prisma.ProjectGetPayload<{ include: { category: true } }>;
+
 export default async function AdminProjectsPage() {
   const session = await auth();
   if (!session) redirect("/admin/login");
 
-  let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  let projects: ProjectRow[] = [];
   try {
     projects = await prisma.project.findMany({
       where: { deletedAt: null },
