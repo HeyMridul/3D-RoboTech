@@ -65,7 +65,7 @@ export function Hero({ stats }: HeroProps) {
               <p>MEMBERS: {displayStats.members}+</p>
               <p>WORKSHOPS: {displayStats.workshops}+</p>
               <p>
-                LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+                LAT {siteConfig.location.lat}{" // "}LON {siteConfig.location.lon}
               </p>
             </div>
           </div>

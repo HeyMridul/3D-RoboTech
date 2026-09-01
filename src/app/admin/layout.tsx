@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 const navItems = [
   { label: "Dashboard", href: "/admin" },

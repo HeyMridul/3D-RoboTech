@@ -29,7 +29,7 @@ export default function AboutPage() {
             <div className="font-mono-label text-[11px] text-muted border border-card-border bg-card p-4 space-y-1">
               <p>LOCATION: {siteConfig.location.name}</p>
               <p>
-                COORDINATES: LAT {siteConfig.location.lat} // LON{" "}
+                COORDINATES: LAT {siteConfig.location.lat}{" // "}LON{" "}
                 {siteConfig.location.lon}
               </p>
               <p>STATUS: OPERATIONAL</p>

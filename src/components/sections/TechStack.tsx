@@ -2,7 +2,6 @@
 
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { siteConfig } from "@/config/site";
 
 type Technology = { id: string; name: string; slug: string };
 

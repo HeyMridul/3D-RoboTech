@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getProjectBySlug } from "@/server/services/content";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { Button } from "@/components/ui/Button";
-import { ExternalLink, Github } from "lucide-react";
+import { Code2, ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -143,7 +143,7 @@ export default async function ProjectDetailPage({
                 {project.githubUrl && (
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" className="w-full">
-                      <Github size={16} /> GITHUB
+                      <Code2 size={16} /> GITHUB
                     </Button>
                   </a>
                 )}

@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useMousePosition } from "@/hooks/use-media";
-import { useEffect, useState } from "react";
 
 const SceneCanvas = dynamic(
   () => import("./SceneCanvas").then((m) => m.SceneCanvas),
@@ -30,11 +29,6 @@ interface HeroCanvasProps {
 
 export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
   const mouse = useMousePosition();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) return <SceneLoader />;
 
   return (
     <SceneCanvas

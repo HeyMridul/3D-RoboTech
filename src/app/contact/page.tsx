@@ -57,7 +57,7 @@ export default function ContactPage() {
               </p>
               <p>
                 <span className="text-muted">COORDS:</span> LAT{" "}
-                {siteConfig.location.lat} // LON {siteConfig.location.lon}
+                {siteConfig.location.lat}{" // "}LON {siteConfig.location.lon}
               </p>
             </div>
 

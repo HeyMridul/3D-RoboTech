@@ -61,7 +61,7 @@ export function Footer() {
             © {new Date().getFullYear()} TRAIC — Robotics & Innovation Club
           </p>
           <p className="font-mono-label text-[10px] text-muted">
-            LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+            LAT {siteConfig.location.lat}{" // "}LON {siteConfig.location.lon}
           </p>
         </div>
       </div>

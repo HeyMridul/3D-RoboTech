@@ -41,7 +41,7 @@ export default async function AdminApplicationsPage() {
                 </span>
               </div>
               <p className="font-mono-label text-[10px] text-muted mb-2">
-                {app.year} // {app.branch}
+                {app.year}{" // "}{app.branch}
               </p>
               <p className="text-sm text-muted mb-3">{app.message}</p>
               <div className="flex flex-wrap gap-1">

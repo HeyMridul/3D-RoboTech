@@ -10,6 +10,11 @@ interface ParticleFieldProps {
   color?: string;
 }
 
+function noise(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
 export function ParticleField({ count, color = "#00d4ff" }: ParticleFieldProps) {
   const ref = useRef<THREE.Points>(null);
   const isMobile = useIsMobile();
@@ -20,10 +25,10 @@ export function ParticleField({ count, color = "#00d4ff" }: ParticleFieldProps) 
     const pos = new Float32Array(particleCount * 3);
     const vel = new Float32Array(particleCount);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      vel[i] = Math.random() * 0.02 + 0.005;
+      pos[i * 3] = (noise(i * 4 + 1) - 0.5) * 20;
+      pos[i * 3 + 1] = (noise(i * 4 + 2) - 0.5) * 20;
+      pos[i * 3 + 2] = (noise(i * 4 + 3) - 0.5) * 20;
+      vel[i] = noise(i * 4 + 4) * 0.02 + 0.005;
     }
     return [pos, vel];
   }, [particleCount]);
