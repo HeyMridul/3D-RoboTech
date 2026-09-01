@@ -19,14 +19,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!loaded && <SystemLoader onComplete={() => setLoaded(true)} />}
-      {loaded && (
-        <>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CommandPalette />
-        </>
-      )}
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <Footer />
+      <CommandPalette />
     </>
   );
 }

@@ -7,10 +7,12 @@ async function main() {
   console.log("🌱 Seeding TRAIC database (demo content)...");
 
   // Admin user
-  const passwordHash = await bcrypt.hash(
-    process.env.ADMIN_PASSWORD || "TraicAdmin2026!",
-    12,
-  );
+  const developmentPassword = "TraicAdmin2026!";
+  const adminPassword = process.env.ADMIN_PASSWORD || developmentPassword;
+  if (process.env.NODE_ENV === "production" && !process.env.ADMIN_PASSWORD) {
+    throw new Error("ADMIN_PASSWORD is required when seeding production.");
+  }
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   const admin = await prisma.user.upsert({
     where: { email: process.env.ADMIN_EMAIL || "admin@traic.dev" },
@@ -314,14 +316,14 @@ async function main() {
 
   // Achievements (demo - clearly marked)
   const achievements = [
-    { title: "AI Robotics Challenge — 1st Place", slug: "ai-robotics-2026", year: 2026, missionNumber: 21, rank: "FIRST PLACE", org: "[DEMO] Regional Competition" },
-    { title: "Robotics Excellence Award", slug: "robotics-excellence-2025", year: 2025, missionNumber: 14, rank: "EXCELLENCE AWARD", org: "[DEMO] University Tech Fest" },
-    { title: "Smart India Hackathon — Finalist", slug: "sih-finalist-2025", year: 2025, missionNumber: 12, rank: "FINALIST", org: "[DEMO] SIH 2025" },
-    { title: "Best IoT Project — Tech Summit", slug: "iot-summit-2024", year: 2024, missionNumber: 8, rank: "BEST PROJECT", org: "[DEMO] Tech Summit" },
-    { title: "Drone Racing Championship — 2nd", slug: "drone-racing-2024", year: 2024, missionNumber: 6, rank: "SECOND PLACE", org: "[DEMO] Aero Club" },
-    { title: "100+ Active Members Milestone", slug: "members-milestone", year: 2025, missionNumber: 10, rank: "MILESTONE", org: "TRAIC Community" },
-    { title: "25 Workshops Completed", slug: "workshops-milestone", year: 2025, missionNumber: 11, rank: "MILESTONE", org: "TRAIC Learning" },
-    { title: "Open Source Release — TRAIC SDK", slug: "opensource-sdk", year: 2026, missionNumber: 20, rank: "RELEASE", org: "TRAIC GitHub" },
+    { title: "[DEMO] AI Robotics Challenge — 1st Place", slug: "ai-robotics-2026", year: 2026, missionNumber: 21, rank: "FIRST PLACE", org: "[DEMO] Regional Competition" },
+    { title: "[DEMO] Robotics Excellence Award", slug: "robotics-excellence-2025", year: 2025, missionNumber: 14, rank: "EXCELLENCE AWARD", org: "[DEMO] University Tech Fest" },
+    { title: "[DEMO] Smart India Hackathon — Finalist", slug: "sih-finalist-2025", year: 2025, missionNumber: 12, rank: "FINALIST", org: "[DEMO] SIH 2025" },
+    { title: "[DEMO] Best IoT Project — Tech Summit", slug: "iot-summit-2024", year: 2024, missionNumber: 8, rank: "BEST PROJECT", org: "[DEMO] Tech Summit" },
+    { title: "[DEMO] Drone Racing Championship — 2nd", slug: "drone-racing-2024", year: 2024, missionNumber: 6, rank: "SECOND PLACE", org: "[DEMO] Aero Club" },
+    { title: "[DEMO] 100+ Active Members Milestone", slug: "members-milestone", year: 2025, missionNumber: 10, rank: "MILESTONE", org: "[DEMO] TRAIC Community" },
+    { title: "[DEMO] 25 Workshops Completed", slug: "workshops-milestone", year: 2025, missionNumber: 11, rank: "MILESTONE", org: "[DEMO] TRAIC Learning" },
+    { title: "[DEMO] Open Source Release — TRAIC SDK", slug: "opensource-sdk", year: 2026, missionNumber: 20, rank: "RELEASE", org: "[DEMO] TRAIC GitHub" },
   ];
 
   for (const [i, a] of achievements.entries()) {
@@ -353,7 +355,7 @@ async function main() {
 
   console.log("✅ Seed complete!");
   console.log(`   Admin: ${admin.email}`);
-  console.log(`   Password: ${process.env.ADMIN_PASSWORD || "TraicAdmin2026!"}`);
+  console.log(`   Password source: ${process.env.ADMIN_PASSWORD ? "ADMIN_PASSWORD" : "development default"}`);
   console.log("   ⚠️  All content is DEMO data — replace with real TRAIC data.");
 }
 
