@@ -68,7 +68,7 @@ export function WhoWeAre() {
                     : "border-card-border text-muted hover:border-cyan/30 hover:text-foreground"
                 }`}
               >
-                <span className="text-cyan/60 mr-3">{item.id}</span>
+                <span className="text-cyan/85 mr-3">{item.id}</span>
                 {item.label}
               </button>
             ))}

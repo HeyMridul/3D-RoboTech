@@ -22,8 +22,17 @@ export function WorkshopsSection({ workshops }: WorkshopsSectionProps) {
           description="Technical workshops and learning tracks for every skill level."
         />
 
-        {/* Learning path */}
-        <div className="mb-16 overflow-x-auto pb-4">
+        {/*
+          Scrolls horizontally on narrow screens, so it needs to be focusable
+          and labelled — otherwise keyboard users cannot reach the steps that
+          are off-screen.
+        */}
+        <div
+          className="mb-16 overflow-x-auto pb-4"
+          tabIndex={0}
+          role="group"
+          aria-label="Learning path, scrollable"
+        >
           <div className="flex items-center gap-2 min-w-max px-2">
             {siteConfig.learningPath.map((step, i) => (
               <div key={step} className="flex items-center gap-2">

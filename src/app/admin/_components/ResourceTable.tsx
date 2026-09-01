@@ -136,7 +136,12 @@ export function ResourceTable({
           </p>
         </div>
       ) : (
-        <div className="border border-card-border overflow-x-auto">
+        <div
+          className="border border-card-border overflow-x-auto"
+          tabIndex={0}
+          role="group"
+          aria-label={`${ui.title} table, scrollable`}
+        >
           <table className="w-full text-sm">
             <caption className="sr-only">{ui.title}</caption>
             <thead className="bg-graphite font-mono-label text-[10px] text-muted">
