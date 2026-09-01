@@ -31,17 +31,13 @@ export function AppShell({
       </a>
       <CustomCursor />
       {!loaded && <SystemLoader onComplete={() => setLoaded(true)} />}
-      {loaded && (
-        <>
-          {demoMode && <DemoBanner />}
-          <Navbar />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <CommandPalette />
-        </>
-      )}
+      {demoMode && <DemoBanner />}
+      <Navbar />
+      <main id="main" className="flex-1">
+        {children}
+      </main>
+      <Footer />
+      <CommandPalette />
     </>
   );
 }
