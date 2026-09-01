@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 
 type Project = Awaited<
@@ -39,11 +39,9 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
         )}
 
         <div className="mt-12 text-center">
-          <Link href="/projects">
-            <Button variant="outline" size="lg">
-              VIEW ALL PROJECTS
-            </Button>
-          </Link>
+          <ButtonLink href="/projects" variant="outline" size="lg">
+            VIEW ALL PROJECTS
+          </ButtonLink>
         </div>
       </div>
     </section>

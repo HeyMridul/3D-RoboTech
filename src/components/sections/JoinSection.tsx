@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 
 const interestOptions = [
   "Robotics",
@@ -72,26 +72,28 @@ export function JoinSection() {
         />
 
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <Link href="/join">
-            <Button size="lg">JOIN TRAIC</Button>
-          </Link>
-          <Link href="/join#propose">
-            <Button variant="outline" size="lg">
-              PROPOSE A PROJECT
-            </Button>
-          </Link>
-          <Link href="/workshops">
-            <Button variant="secondary" size="lg">
-              ATTEND A WORKSHOP
-            </Button>
-          </Link>
+          <ButtonLink href="/join#apply" size="lg">
+            JOIN TRAIC
+          </ButtonLink>
+          {/* Project proposals go through contact — there is no separate
+              intake form, and #propose previously pointed at nothing. */}
+          <ButtonLink href="/contact" variant="outline" size="lg">
+            PROPOSE A PROJECT
+          </ButtonLink>
+          <ButtonLink href="/workshops" variant="secondary" size="lg">
+            ATTEND A WORKSHOP
+          </ButtonLink>
         </div>
 
         <form
+          id="apply"
           onSubmit={handleSubmit}
-          className="max-w-2xl mx-auto border border-card-border bg-card p-8 space-y-6"
+          aria-labelledby="apply-heading"
+          className="max-w-2xl mx-auto border border-card-border bg-card p-8 space-y-6 scroll-mt-28"
         >
-          <p className="font-mono-label text-cyan">APPLICATION FORM</p>
+          <p id="apply-heading" className="font-mono-label text-cyan">
+            APPLICATION FORM
+          </p>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">

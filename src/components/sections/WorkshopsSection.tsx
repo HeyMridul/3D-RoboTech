@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 
@@ -109,9 +109,9 @@ export function WorkshopsSection({ workshops }: WorkshopsSectionProps) {
         )}
 
         <div className="mt-10 text-center">
-          <Link href="/workshops">
-            <Button variant="outline">ALL WORKSHOPS</Button>
-          </Link>
+          <ButtonLink href="/workshops" variant="outline">
+            ALL WORKSHOPS
+          </ButtonLink>
         </div>
       </div>
     </section>

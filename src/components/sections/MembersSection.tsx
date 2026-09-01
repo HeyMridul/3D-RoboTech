@@ -6,7 +6,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 type Member = Awaited<
@@ -114,9 +114,9 @@ export function MembersSection({ members }: MembersSectionProps) {
         )}
 
         <div className="mt-10 text-center">
-          <Link href="/members">
-            <Button variant="outline">ALL MEMBERS</Button>
-          </Link>
+          <ButtonLink href="/members" variant="outline">
+            ALL MEMBERS
+          </ButtonLink>
         </div>
       </div>
     </section>

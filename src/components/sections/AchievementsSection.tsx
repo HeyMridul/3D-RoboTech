@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 
 type Achievement = Awaited<
   ReturnType<typeof import("@/server/services/content").getAchievements>
@@ -66,9 +66,9 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
         )}
 
         <div className="mt-10 text-center">
-          <Link href="/achievements">
-            <Button variant="outline">FULL MISSION LOG</Button>
-          </Link>
+          <ButtonLink href="/achievements" variant="outline">
+            FULL MISSION LOG
+          </ButtonLink>
         </div>
       </div>
     </section>

@@ -210,6 +210,81 @@ export async function getAchievements() {
   );
 }
 
+export async function getEventBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.event.findFirst({
+        where: { slug, publishStatus: PublishStatus.PUBLISHED, deletedAt: null },
+      }),
+    null,
+  );
+}
+
+export async function getWorkshopBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.workshop.findFirst({
+        where: { slug, publishStatus: PublishStatus.PUBLISHED, deletedAt: null },
+      }),
+    null,
+  );
+}
+
+export async function getBlogPosts() {
+  return safeQuery(
+    () =>
+      prisma.blogPost.findMany({
+        where: { publishStatus: PublishStatus.PUBLISHED, deletedAt: null },
+        include: { author: { select: { name: true } } },
+        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      }),
+    [],
+  );
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.blogPost.findFirst({
+        where: { slug, publishStatus: PublishStatus.PUBLISHED, deletedAt: null },
+        include: { author: { select: { name: true } } },
+      }),
+    null,
+  );
+}
+
+export async function getGalleryItems() {
+  return safeQuery(
+    () =>
+      prisma.galleryItem.findMany({
+        include: { project: { select: { title: true, slug: true } } },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      }),
+    [],
+  );
+}
+
+/** Slugs for generateStaticParams and the sitemap. */
+export async function getPublishedSlugs() {
+  return safeQuery(
+    async () => {
+      const where = {
+        publishStatus: PublishStatus.PUBLISHED,
+        deletedAt: null,
+      } as const;
+      const [projects, members, events, workshops, posts] = await Promise.all([
+        prisma.project.findMany({ where, select: { slug: true, updatedAt: true } }),
+        prisma.member.findMany({ where, select: { slug: true, updatedAt: true } }),
+        prisma.event.findMany({ where, select: { slug: true, updatedAt: true } }),
+        prisma.workshop.findMany({ where, select: { slug: true, updatedAt: true } }),
+        prisma.blogPost.findMany({ where, select: { slug: true, updatedAt: true } }),
+      ]);
+      return { projects, members, events, workshops, posts };
+    },
+    { projects: [], members: [], events: [], workshops: [], posts: [] },
+  );
+}
+
 export async function getTechnologies() {
   return safeQuery(
     () => prisma.technology.findMany({ orderBy: { name: "asc" } }),

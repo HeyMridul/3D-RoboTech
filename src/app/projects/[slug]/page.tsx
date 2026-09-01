@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getProjectBySlug } from "@/server/services/content";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { ExternalLink } from "lucide-react";
 import { GithubIcon } from "@/components/ui/BrandIcons";
 
@@ -142,18 +142,25 @@ export default async function ProjectDetailPage({
 
               <div className="flex flex-col gap-2">
                 {project.githubUrl && (
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" className="w-full">
-                      <GithubIcon size={16} /> GITHUB
-                    </Button>
-                  </a>
+                  <ButtonLink
+                    href={project.githubUrl}
+                    external
+                    variant="outline"
+                    className="w-full"
+                    withArrow={false}
+                  >
+                    <GithubIcon size={16} /> GITHUB
+                  </ButtonLink>
                 )}
                 {project.demoUrl && (
-                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="primary" className="w-full">
-                      <ExternalLink size={16} /> LIVE DEMO
-                    </Button>
-                  </a>
+                  <ButtonLink
+                    href={project.demoUrl}
+                    external
+                    className="w-full"
+                    withArrow={false}
+                  >
+                    <ExternalLink size={16} /> LIVE DEMO
+                  </ButtonLink>
                 )}
               </div>
             </div>

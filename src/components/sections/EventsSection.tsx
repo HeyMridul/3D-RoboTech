@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { formatDate } from "@/lib/utils";
 
 type Event = Awaited<
@@ -77,9 +77,9 @@ export function EventsSection({ events }: EventsSectionProps) {
         )}
 
         <div className="mt-12 text-center">
-          <Link href="/events">
-            <Button variant="outline">VIEW ALL EVENTS</Button>
-          </Link>
+          <ButtonLink href="/events" variant="outline">
+            VIEW ALL EVENTS
+          </ButtonLink>
         </div>
       </div>
     </section>
