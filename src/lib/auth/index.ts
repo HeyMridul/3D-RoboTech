@@ -33,7 +33,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     (process.env.NODE_ENV === "development"
       ? "traic-development-only-secret-change-before-deploy"
       : undefined),
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
   pages: {
     signIn: "/admin/login",
   },
@@ -74,6 +74,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id!;
         token.role = user.role;
+      } else if (token.id) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { role: true, deletedAt: true },
+        });
+        if (!currentUser || currentUser.deletedAt) return null;
+        token.role = currentUser.role;
       }
       return token;
     },

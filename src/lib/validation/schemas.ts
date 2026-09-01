@@ -1,5 +1,30 @@
 import { z } from "zod";
 
+function isSafeWebUrl(value: string) {
+  try {
+    const protocol = new URL(value).protocol;
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function isSafeAssetUrl(value: string) {
+  if (/^\/uploads\/[a-f0-9-]+\.(?:jpe?g|png|webp|gif|glb)$/i.test(value)) {
+    return true;
+  }
+  try {
+    const url = new URL(value);
+    return (
+      url.protocol === "https:" &&
+      Boolean(process.env.MEDIA_HOSTNAME) &&
+      url.hostname === process.env.MEDIA_HOSTNAME
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const applicationSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email().max(255),
@@ -31,11 +56,25 @@ export const projectSchema = z.object({
   excerpt: z.string().optional(),
   status: z.string().optional(),
   categoryId: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  modelUrl: z.string().optional().nullable(),
-  githubUrl: z.string().url().optional().nullable().or(z.literal("")),
-  demoUrl: z.string().url().optional().nullable().or(z.literal("")),
-  videoUrl: z.string().url().optional().nullable().or(z.literal("")),
+  imageUrl: z
+    .string()
+    .refine(
+      isSafeAssetUrl,
+      "Invalid asset URL",
+    )
+    .optional()
+    .nullable(),
+  modelUrl: z
+    .string()
+    .refine(
+      isSafeAssetUrl,
+      "Invalid model URL",
+    )
+    .optional()
+    .nullable(),
+  githubUrl: z.string().url().refine(isSafeWebUrl).optional().nullable().or(z.literal("")),
+  demoUrl: z.string().url().refine(isSafeWebUrl).optional().nullable().or(z.literal("")),
+  videoUrl: z.string().url().refine(isSafeWebUrl).optional().nullable().or(z.literal("")),
   year: z.number().int().optional().nullable(),
   achievement: z.string().optional().nullable(),
   problem: z.string().optional().nullable(),
@@ -53,7 +92,20 @@ export const projectSchema = z.object({
 });
 
 const publishStatusSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]);
-const optionalUrl = z.string().url().optional().nullable().or(z.literal(""));
+const optionalUrl = z
+  .string()
+  .url()
+  .refine(isSafeWebUrl, "Only HTTP(S) URLs are allowed")
+  .optional()
+  .nullable()
+  .or(z.literal(""));
+const assetUrl = z
+  .string()
+  .refine(isSafeAssetUrl, "Use a local upload or configured media host");
+const optionalAssetUrl = assetUrl
+  .optional()
+  .nullable()
+  .or(z.literal(""));
 
 export const memberSchema = z.object({
   name: z.string().min(2).max(120),
@@ -68,7 +120,7 @@ export const memberSchema = z.object({
     "ALUMNI",
   ]),
   bio: z.string().max(10000).optional().nullable(),
-  photoUrl: optionalUrl,
+  photoUrl: optionalAssetUrl,
   skills: z.array(z.string().min(1).max(80)).max(30).default([]),
   githubUrl: optionalUrl,
   linkedinUrl: optionalUrl,
@@ -96,7 +148,7 @@ export const eventSchema = z.object({
   location: z.string().max(200).optional().nullable(),
   startDate: z.coerce.date(),
   endDate: z.coerce.date().optional().nullable(),
-  imageUrl: optionalUrl,
+  imageUrl: optionalAssetUrl,
   registrationUrl: optionalUrl,
   featured: z.boolean().default(false),
   publishStatus: publishStatusSchema.default("DRAFT"),
@@ -114,7 +166,7 @@ export const workshopSchema = z.object({
   resources: z.string().max(10000).optional().nullable(),
   registrationOpen: z.boolean().default(true),
   maxSeats: z.number().int().positive().max(10000).optional().nullable(),
-  imageUrl: optionalUrl,
+  imageUrl: optionalAssetUrl,
   order: z.number().int().default(0),
   publishStatus: publishStatusSchema.default("DRAFT"),
 });
@@ -127,7 +179,7 @@ export const achievementSchema = z.object({
   missionNumber: z.number().int().positive().optional().nullable(),
   rank: z.string().max(120).optional().nullable(),
   organization: z.string().max(200).optional().nullable(),
-  imageUrl: optionalUrl,
+  imageUrl: optionalAssetUrl,
   featured: z.boolean().default(false),
   order: z.number().int().default(0),
   publishStatus: publishStatusSchema.default("DRAFT"),
@@ -138,14 +190,14 @@ export const blogPostSchema = z.object({
   slug: z.string().min(2).max(200).optional(),
   excerpt: z.string().max(500).optional().nullable(),
   content: z.string().min(20).max(100000),
-  coverImage: optionalUrl,
+  coverImage: optionalAssetUrl,
   publishStatus: publishStatusSchema.default("DRAFT"),
 });
 
 export const galleryItemSchema = z.object({
   title: z.string().max(200).optional().nullable(),
   caption: z.string().max(1000).optional().nullable(),
-  imageUrl: z.string().url(),
+  imageUrl: assetUrl,
   projectId: z.string().optional().nullable(),
   order: z.number().int().default(0),
 });

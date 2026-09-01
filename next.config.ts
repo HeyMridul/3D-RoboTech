@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const mediaHostname = process.env.MEDIA_HOSTNAME;
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
@@ -8,12 +10,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
+    remotePatterns: mediaHostname
+      ? [{ protocol: "https", hostname: mediaHostname, pathname: "/**" }]
+      : [],
   },
   async headers() {
     return [
