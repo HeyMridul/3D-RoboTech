@@ -36,13 +36,12 @@ export async function uploadFile(file: File): Promise<StorageResult> {
   const provider = process.env.STORAGE_PROVIDER || "local";
 
   if (provider === "local") {
-    const uploadDir =
-      process.env.STORAGE_LOCAL_PATH || path.join(process.cwd(), "public/uploads");
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
 
     const filename = `${randomUUID()}${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filePath = path.join(uploadDir, filename);
+    const filePath = path.join(process.cwd(), "public", "uploads", filename);
     await writeFile(filePath, buffer);
 
     return {
@@ -60,8 +59,8 @@ export async function deleteFile(url: string) {
   const provider = process.env.STORAGE_PROVIDER || "local";
   if (provider !== "local" || !url.startsWith("/uploads/")) return;
 
-  const uploadDir =
-    process.env.STORAGE_LOCAL_PATH || path.join(process.cwd(), "public/uploads");
   const filename = path.basename(url);
-  await unlink(path.join(uploadDir, filename)).catch(() => undefined);
+  await unlink(path.join(process.cwd(), "public", "uploads", filename)).catch(
+    () => undefined,
+  );
 }
