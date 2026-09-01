@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMounted, useMousePosition } from "@/hooks/use-media";
+import { useIsMobile, useMounted, useMousePosition } from "@/hooks/use-media";
 
 const SceneCanvas = dynamic(
   () => import("./SceneCanvas").then((m) => m.SceneCanvas),
@@ -32,15 +32,22 @@ interface HeroCanvasProps {
 export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
   const mouse = useMousePosition();
   const mounted = useMounted();
+  const isMobile = useIsMobile();
 
   if (!mounted) return <SceneLoader />;
 
+  /*
+   * Two framings rather than one scaled down. On desktop the camera sits left
+   * so the craft lands in the empty right half beside the copy. On a phone
+   * there is no empty half, so it centres and pulls back, seating the craft
+   * below the headline instead of behind it.
+   */
+  const camera = isMobile
+    ? { position: [0, 1.9, 7] as [number, number, number], fov: 42 }
+    : { position: [-2, 1, 5.3] as [number, number, number], fov: 48 };
+
   return (
-    <SceneCanvas
-      className="absolute inset-0 h-full w-full"
-      /* Offset left so the craft frames into the right half, clear of the copy */
-      camera={{ position: [-2, 1, 5.3], fov: 48 }}
-    >
+    <SceneCanvas className="absolute inset-0 h-full w-full" camera={camera}>
       <HeroScene mouse={mouse} scrollProgress={scrollProgress} />
     </SceneCanvas>
   );

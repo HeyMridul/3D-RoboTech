@@ -68,11 +68,13 @@ export function Hero({ stats }: HeroProps) {
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <HeroCanvas scrollProgress={scrollProgress} />
         {/*
-          Two scrims: one anchors the scene to the page background, one keeps
-          the copy legible over whatever the 3D grid is doing behind it.
+          Scrims keep the copy legible over whatever the 3D grid is doing.
+          Vertical on small screens, where text spans the full width and the
+          craft sits below it; horizontal from lg up, where the text occupies
+          the left column and the craft the right.
         */}
-        <div className="absolute inset-0 bg-linear-to-b from-background/60 via-transparent to-background" />
-        <div className="absolute inset-0 bg-linear-to-r from-background via-background/70 to-transparent lg:to-transparent lg:via-background/40" />
+        <div className="absolute inset-0 bg-linear-to-b from-background via-background/55 to-background lg:from-background/60 lg:via-transparent lg:to-background" />
+        <div className="absolute inset-0 hidden lg:block bg-linear-to-r from-background via-background/40 to-transparent" />
       </div>
 
       <div className="container-traic relative z-10 pt-32 pb-24">
