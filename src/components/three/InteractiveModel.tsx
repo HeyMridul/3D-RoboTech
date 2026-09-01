@@ -46,7 +46,14 @@ function Model({
    */
   const { model, meshes } = useMemo(() => {
     const clone = scene.clone(true);
-    const found: { mesh: THREE.Mesh; base: THREE.Vector3; dir: THREE.Vector3 }[] = [];
+    const found: {
+      mesh: THREE.Mesh;
+      base: THREE.Vector3;
+      exploded: THREE.Vector3;
+      material: THREE.MeshStandardMaterial | null;
+      baseEmissive: THREE.Color | null;
+      baseIntensity: number;
+    }[] = [];
 
     const box = new THREE.Box3().setFromObject(clone);
     const centre = box.getCenter(new THREE.Vector3());
@@ -54,12 +61,32 @@ function Model({
     clone.traverse((child) => {
       if (!(child as THREE.Mesh).isMesh) return;
       const mesh = child as THREE.Mesh;
+
+      /*
+       * Object3D.clone() copies the graph but keeps material references, so
+       * tinting the selection would mutate the material inside drei's GLTF
+       * cache — leaking the highlight into every other viewer and surviving
+       * navigation. Each mesh gets its own material instead.
+       */
+      let material: THREE.MeshStandardMaterial | null = null;
+      if (mesh.material && !Array.isArray(mesh.material)) {
+        material = (mesh.material as THREE.MeshStandardMaterial).clone();
+        mesh.material = material;
+      }
+
       const base = mesh.position.clone();
-      const world = mesh.getWorldPosition(new THREE.Vector3());
-      const dir = world.sub(centre);
+      const dir = mesh.getWorldPosition(new THREE.Vector3()).sub(centre);
       // Parts sitting exactly at the centroid need some direction to move in
       if (dir.lengthSq() < 1e-6) dir.set(0, 1, 0);
-      found.push({ mesh, base, dir: dir.normalize() });
+
+      found.push({
+        mesh,
+        base,
+        exploded: base.clone().add(dir.normalize().multiplyScalar(0.9)),
+        material,
+        baseEmissive: material?.emissive.clone() ?? null,
+        baseIntensity: material?.emissiveIntensity ?? 0,
+      });
     });
 
     return { model: clone, meshes: found };
@@ -71,41 +98,36 @@ function Model({
     );
   }, [meshes, onParts]);
 
-  // Highlight the selected part by tinting its emissive channel.
-  useEffect(() => {
-    for (const { mesh } of meshes) {
-      const material = mesh.material as THREE.MeshStandardMaterial;
-      if (!material || !("emissive" in material)) continue;
-      if (!mesh.userData.baseEmissive) {
-        mesh.userData.baseEmissive = material.emissive.clone();
-        mesh.userData.baseIntensity = material.emissiveIntensity;
-      }
-      const isSelected = selected === mesh.name;
-      material.emissive.copy(
-        isSelected
-          ? new THREE.Color(SCENE_COLORS.cyan)
-          : (mesh.userData.baseEmissive as THREE.Color),
-      );
-      material.emissiveIntensity = isSelected
-        ? 0.9
-        : (mesh.userData.baseIntensity as number);
-    }
-  }, [selected, meshes]);
+  const highlight = useMemo(() => new THREE.Color(SCENE_COLORS.cyan), []);
 
+  /*
+   * Position and highlight are both applied here rather than in an effect.
+   * They mutate three.js objects every frame, which is exactly what a frame
+   * callback is for; doing it in an effect would fight the animation.
+   *
+   * react-hooks/immutability treats useFrame's callback as render-scoped and
+   * flags writes to the memoised scene graph. It is a requestAnimationFrame
+   * callback that runs after render, and these objects are three.js state
+   * living outside React, so mutating them here is the intended R3F pattern.
+   */
+  /* eslint-disable react-hooks/immutability */
   useFrame((_, delta) => {
-    // Ease each part between its rest position and its exploded offset.
     const t = Math.min(1, delta * 6);
-    for (const { mesh, base, dir } of meshes) {
-      const target = exploded
-        ? base.clone().add(dir.clone().multiplyScalar(0.9))
-        : base;
-      mesh.position.lerp(target, t);
+
+    for (const part of meshes) {
+      part.mesh.position.lerp(exploded ? part.exploded : part.base, t);
+
+      if (!part.material || !part.baseEmissive) continue;
+      const isSelected = selected === part.mesh.name;
+      part.material.emissive.copy(isSelected ? highlight : part.baseEmissive);
+      part.material.emissiveIntensity = isSelected ? 0.9 : part.baseIntensity;
     }
 
     if (groupRef.current && !exploded && !selected && !reducedMotion) {
       groupRef.current.rotation.y += delta * 0.18;
     }
   });
+  /* eslint-enable react-hooks/immutability */
 
   return (
     <group

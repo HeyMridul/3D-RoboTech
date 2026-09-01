@@ -32,6 +32,18 @@ export function useIsMobile(breakpoint = 768) {
   return useMediaQuery(`(max-width: ${breakpoint - 1}px)`);
 }
 
+/**
+ * Whether to show ⌘ or Ctrl in keyboard hints. Read through the store so it
+ * resolves on the first client render instead of flashing the wrong glyph.
+ */
+export function useIsApplePlatform() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => /Mac|iPhone|iPad|iPod/.test(navigator.userAgent),
+    () => false,
+  );
+}
+
 /** True once mounted on the client; use to defer client-only rendering. */
 export function useMounted() {
   return useSyncExternalStore(

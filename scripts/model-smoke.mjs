@@ -3,7 +3,7 @@
  * parts are listed, selection highlights, and the exploded view moves geometry.
  */
 import { chromium } from "playwright";
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
 /*
  * Defaults to the production server. React Strict Mode double-mounts effects
