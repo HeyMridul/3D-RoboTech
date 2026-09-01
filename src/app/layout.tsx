@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import { Providers } from "@/components/layout/Providers";
+import { DemoModeBanner } from "@/components/ui/DemoModeBanner";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -85,7 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         <Providers>
-          <AppShell>{children}</AppShell>
+          <AppShell banner={<DemoModeBanner />}>{children}</AppShell>
         </Providers>
       </body>
     </html>

@@ -7,7 +7,14 @@ import { Footer } from "@/components/ui/Footer";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import { SystemLoader } from "@/components/ui/SystemLoader";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  banner,
+}: {
+  children: React.ReactNode;
+  /** Rendered on public pages only; a server component passed down from the layout. */
+  banner?: React.ReactNode;
+}) {
   const [booted, setBooted] = useState(false);
   const pathname = usePathname();
 
@@ -37,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
       <CommandPalette />
+      {banner}
 
       {!booted && <SystemLoader onComplete={() => setBooted(true)} />}
     </>
