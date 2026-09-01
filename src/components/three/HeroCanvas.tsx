@@ -39,7 +39,8 @@ export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
   return (
     <SceneCanvas
       className="absolute inset-0 h-full w-full"
-      camera={{ position: [0, 1, 6], fov: 50 }}
+      /* Offset left so the craft frames into the right half, clear of the copy */
+      camera={{ position: [-2, 1, 5.3], fov: 48 }}
     >
       <HeroScene mouse={mouse} scrollProgress={scrollProgress} />
     </SceneCanvas>
