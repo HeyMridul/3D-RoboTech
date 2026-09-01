@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { ButtonLink } from "@/components/ui/Button";

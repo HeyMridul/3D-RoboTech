@@ -22,6 +22,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  // Lets relative OpenGraph/Twitter image paths resolve to absolute URLs.
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.fullName,
     template: `%s | ${siteConfig.name}`,
@@ -57,6 +59,18 @@ export const metadata: Metadata = {
   },
 };
 
+/** Identifies TRAIC as an organisation to search engines. */
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteConfig.fullName,
+  alternateName: siteConfig.name,
+  description: siteConfig.description,
+  url: siteConfig.url,
+  email: siteConfig.contact.email,
+  sameAs: Object.values(siteConfig.social),
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -64,6 +78,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

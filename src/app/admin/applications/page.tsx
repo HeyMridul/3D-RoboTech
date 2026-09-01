@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { formatDate } from "@/lib/utils";
 import { ApplicationActions } from "../_components/InboxActions";
+import { Sep } from "@/components/ui/Sep";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Applications — TRAIC CMS" };
@@ -27,7 +28,7 @@ export default async function AdminApplicationsPage() {
       <p className="font-mono-label text-[10px] text-cyan mb-1">TRAIC CMS</p>
       <h1 className="font-display text-2xl font-bold">Applications</h1>
       <p className="text-sm text-muted mt-1 mb-8">
-        {applications.length} total // {pending} awaiting review
+        {applications.length} total<Sep />{pending} awaiting review
       </p>
 
       {applications.length === 0 ? (
@@ -53,7 +54,7 @@ export default async function AdminApplicationsPage() {
                     {app.email}
                   </a>
                   <p className="font-mono-label text-[10px] text-muted mt-1">
-                    {app.year} // {app.branch} // {formatDate(app.createdAt)}
+                    {app.year}<Sep />{app.branch}<Sep />{formatDate(app.createdAt)}
                   </p>
                 </div>
                 <ApplicationActions id={app.id} status={app.status} />

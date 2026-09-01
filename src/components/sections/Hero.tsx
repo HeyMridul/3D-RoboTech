@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { SystemStatus } from "@/components/ui/SystemStatus";
 import { siteConfig } from "@/config/site";
+import { Sep } from "@/components/ui/Sep";
 
 const HeroCanvas = dynamic(
   () => import("@/components/three/HeroCanvas").then((m) => m.HeroCanvas),
@@ -127,7 +128,7 @@ export function Hero({ stats }: HeroProps) {
             <div className="flex gap-2">
               <dt className="sr-only">Coordinates</dt>
               <dd>
-                LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+                LAT {siteConfig.location.lat}<Sep />LON {siteConfig.location.lon}
               </dd>
             </div>
           </dl>

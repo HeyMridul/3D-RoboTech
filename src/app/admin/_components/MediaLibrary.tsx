@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import { Sep } from "@/components/ui/Sep";
 
 interface MediaItem {
   id: string;
@@ -69,7 +70,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
           {busy ? "UPLOADING…" : "+ UPLOAD FILES"}
         </button>
         <p className="font-mono-label text-[10px] text-muted">
-          {items.length} FILES // MAX 8MB EACH
+          {items.length} FILES<Sep />MAX 8MB EACH
         </p>
         <input
           ref={inputRef}
@@ -132,7 +133,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                     {item.filename}
                   </p>
                   <p className="font-mono-label text-[9px] text-muted mt-1">
-                    {formatBytes(item.size)} // {formatDate(item.createdAt)}
+                    {formatBytes(item.size)}<Sep />{formatDate(item.createdAt)}
                   </p>
                   <button
                     type="button"

@@ -180,7 +180,6 @@ export function getClientIp(request: Request): string {
 export function sanitizeString(input: string): string {
   return input
     .replace(/[<>]/g, "")
-    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "")
     .trim()
     .slice(0, 10_000);

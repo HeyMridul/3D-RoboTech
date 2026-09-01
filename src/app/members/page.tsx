@@ -3,6 +3,7 @@ import { getMembers } from "@/server/services/content";
 import Link from "next/link";
 import Image from "next/image";
 import { TechBadge } from "@/components/ui/TechBadge";
+import { Sep } from "@/components/ui/Sep";
 
 export const metadata = { title: "Members" };
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ export default async function MembersPage() {
                     {member.name}
                   </h3>
                   <p className="font-mono-label text-[10px] text-muted mt-1">
-                    {member.role} // {member.category.replace("_", " ")}
+                    {member.role}<Sep />{member.category.replace("_", " ")}
                   </p>
                   <div className="flex flex-wrap gap-1 mt-3">
                     {member.skills.slice(0, 4).map((s) => (

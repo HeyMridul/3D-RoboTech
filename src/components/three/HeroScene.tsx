@@ -8,7 +8,8 @@ import { SCENE_COLORS } from "./materials";
 import { useIsMobile } from "@/hooks/use-media";
 
 interface HeroSceneProps {
-  mouse?: { x: number; y: number };
+  /** Live pointer position; a ref so mouse movement never re-renders React. */
+  mouse?: React.RefObject<{ x: number; y: number }>;
   scrollProgress?: number;
 }
 

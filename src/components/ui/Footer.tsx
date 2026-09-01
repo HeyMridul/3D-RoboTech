@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { Sep } from "@/components/ui/Sep";
 import { brandIcons, type BrandIconName } from "@/components/ui/BrandIcons";
 
 const EXPLORE = [
@@ -115,7 +116,9 @@ export function Footer() {
             © {new Date().getFullYear()} TRAIC — Robotics &amp; Innovation Club
           </p>
           <p className="font-mono-label text-[10px] text-muted">
-            LAT {siteConfig.location.lat} // LON {siteConfig.location.lon}
+            LAT {siteConfig.location.lat}
+            <Sep />
+            LON {siteConfig.location.lon}
           </p>
         </div>
       </div>

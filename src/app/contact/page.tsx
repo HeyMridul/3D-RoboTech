@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { siteConfig } from "@/config/site";
+import { Sep } from "@/components/ui/Sep";
 
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -57,7 +58,7 @@ export default function ContactPage() {
               </p>
               <p>
                 <span className="text-muted">COORDS:</span> LAT{" "}
-                {siteConfig.location.lat} // LON {siteConfig.location.lon}
+                {siteConfig.location.lat}<Sep />LON {siteConfig.location.lon}
               </p>
             </div>
 

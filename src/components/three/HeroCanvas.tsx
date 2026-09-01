@@ -1,23 +1,24 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMousePosition } from "@/hooks/use-media";
-import { useEffect, useState } from "react";
+import { useMounted, useMousePosition } from "@/hooks/use-media";
 
 const SceneCanvas = dynamic(
   () => import("./SceneCanvas").then((m) => m.SceneCanvas),
   { ssr: false, loading: () => <SceneLoader /> },
 );
 
-const HeroScene = dynamic(
-  () => import("./HeroScene").then((m) => m.HeroScene),
-  { ssr: false },
-);
+const HeroScene = dynamic(() => import("./HeroScene").then((m) => m.HeroScene), {
+  ssr: false,
+});
 
 function SceneLoader() {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-charcoal/50">
-      <p className="font-mono-label text-cyan animate-pulse">
+    <div
+      className="absolute inset-0 flex items-center justify-center bg-charcoal/50"
+      aria-hidden="true"
+    >
+      <p className="font-mono-label text-[11px] text-cyan animate-pulse">
         LOADING ROBOTICS CORE...
       </p>
     </div>
@@ -30,9 +31,7 @@ interface HeroCanvasProps {
 
 export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
   const mouse = useMousePosition();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   if (!mounted) return <SceneLoader />;
 

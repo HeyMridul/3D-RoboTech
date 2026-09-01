@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { MessageActions } from "../_components/InboxActions";
+import { Sep } from "@/components/ui/Sep";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Messages — TRAIC CMS" };
@@ -28,7 +29,7 @@ export default async function AdminMessagesPage() {
       <p className="font-mono-label text-[10px] text-cyan mb-1">TRAIC CMS</p>
       <h1 className="font-display text-2xl font-bold">Messages</h1>
       <p className="text-sm text-muted mt-1 mb-8">
-        {messages.length} total // {unread} unread
+        {messages.length} total<Sep />{unread} unread
       </p>
 
       {messages.length === 0 ? (

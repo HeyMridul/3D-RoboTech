@@ -2,6 +2,7 @@ import { WhoWeAre } from "@/components/sections/WhoWeAre";
 import { WhatWeBuild } from "@/components/sections/WhatWeBuild";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { siteConfig } from "@/config/site";
+import { Sep } from "@/components/ui/Sep";
 
 export const metadata = { title: "About" };
 
@@ -29,7 +30,7 @@ export default function AboutPage() {
             <div className="font-mono-label text-[11px] text-muted border border-card-border bg-card p-4 space-y-1">
               <p>LOCATION: {siteConfig.location.name}</p>
               <p>
-                COORDINATES: LAT {siteConfig.location.lat} // LON{" "}
+                COORDINATES: LAT {siteConfig.location.lat}<Sep />LON{" "}
                 {siteConfig.location.lon}
               </p>
               <p>STATUS: OPERATIONAL</p>

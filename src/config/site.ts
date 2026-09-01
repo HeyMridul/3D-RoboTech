@@ -20,13 +20,17 @@ export const siteConfig = {
   contact: {
     email: "contact@traic.dev",
   },
+  /**
+   * Primary navigation. Kept to six items so the bar stays readable; the
+   * remaining routes are reachable from the footer and the command palette.
+   */
   nav: [
     { label: "About", href: "/about" },
     { label: "Projects", href: "/projects" },
     { label: "Workshops", href: "/workshops" },
     { label: "Events", href: "/events" },
+    { label: "Members", href: "/members" },
     { label: "Lab", href: "/lab" },
-    { label: "Join", href: "/join" },
   ],
   projectCategories: [
     "ALL",

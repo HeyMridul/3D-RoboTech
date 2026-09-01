@@ -14,7 +14,8 @@ import {
 } from "./materials";
 
 interface DroneCoreProps {
-  mouse?: { x: number; y: number };
+  /** Live pointer position, read per-frame rather than per-render. */
+  mouse?: React.RefObject<{ x: number; y: number }>;
   scrollProgress?: number;
   /** Fewer segments and no rotor blur on low-power devices. */
   quality?: "high" | "low";
@@ -177,8 +178,10 @@ function Platform({ quality }: { quality: "high" | "low" }) {
  * its charging pad. Fully procedural — no external asset — but structured so
  * a .glb can replace the <Craft/> group without touching the scene.
  */
+const ORIGIN = { x: 0, y: 0 };
+
 export function DroneCore({
-  mouse = { x: 0, y: 0 },
+  mouse,
   scrollProgress = 0,
   quality = "high",
 }: DroneCoreProps) {
@@ -192,6 +195,7 @@ export function DroneCore({
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
+    const pointer = mouse?.current ?? ORIGIN;
 
     if (!reducedMotion) {
       // Rotors always turning — the craft reads as powered, not parked
@@ -201,8 +205,8 @@ export function DroneCore({
 
     if (groupRef.current) {
       // Slow yaw survey, nudged by the cursor
-      const targetY = t * 0.12 + mouse.x * 0.45;
-      const targetX = mouse.y * 0.12;
+      const targetY = t * 0.12 + pointer.x * 0.45;
+      const targetX = pointer.y * 0.12;
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetY,
@@ -216,7 +220,7 @@ export function DroneCore({
       // Bank slightly into the turn
       groupRef.current.rotation.z = THREE.MathUtils.lerp(
         groupRef.current.rotation.z,
-        -mouse.x * 0.1,
+        -pointer.x * 0.1,
         0.06,
       );
       // Descend toward the pad as the hero scrolls away
@@ -227,12 +231,12 @@ export function DroneCore({
     if (gimbalRef.current) {
       gimbalRef.current.rotation.x = THREE.MathUtils.lerp(
         gimbalRef.current.rotation.x,
-        -mouse.y * 0.4,
+        -pointer.y * 0.4,
         0.08,
       );
       gimbalRef.current.rotation.y = THREE.MathUtils.lerp(
         gimbalRef.current.rotation.y,
-        mouse.x * 0.5,
+        pointer.x * 0.5,
         0.08,
       );
     }
